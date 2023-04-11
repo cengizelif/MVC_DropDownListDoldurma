@@ -1,0 +1,105 @@
+﻿@model MVC_DropDownListDoldurma.Models.ViewModel.IndexModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-3.6.4.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <h2>DropdownList Doldurma</h2>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+
+            @using (Html.BeginForm())
+            {
+                <div class="form-horizontal">
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Ülke</label>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(x => x.SecilenUlkeId, Model.UlkeListesi, "Lütfen seçiniz", new { @class = "form-control dropdown" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Şehir</label>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(x => x.SecilenSehirId, Model.SehirListesi, "Lütfen seçiniz", new { @class = "form-control dropdown" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-10 col-lg-offset-2">
+                            <button type="submit" class="btn btn-success">Gönder</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-10 col-lg-offset-2">
+                            <div class="alert alert-info">
+                                Seçilen Ülke ID:@ViewBag.SecilenUlkeId
+                                <br />
+                                Seçilen Şehir ID:@ViewBag.SecilenSehirId
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    </div>
+
+    <script>
+ 
+            $("#SecilenUlkeId").change(function () {
+
+                var ulkeId = $(this).val();
+
+                $("#SecilenSehirId option").not(":first").remove();
+
+                if (ulkeId != "-1" || ulkeId != "") {
+                    
+                    $.ajax({
+                        method: "GET",
+                        url: "/Home/SehirGetir/" + ulkeId
+                    }).done(function (sonuc) {
+
+                        var ddl = $("#SecilenSehirId");
+
+                        for (var i = 0; i < sonuc.length; i++) {
+                            var id = sonuc[i].SehirId;
+                            var isim = sonuc[i].SehirAdi;
+                            var opt = $("<option></option>");
+
+                            opt.text(isim);
+                            opt.val(id);
+                            ddl.append(opt);
+                        }
+
+
+                    });
+
+                }
+            });
+      
+    </script>
+
+
+
+
+</body>
+</html>
